@@ -2,6 +2,6 @@
 #define __DUPCHECK_H___H__
 
 int dupcheck_init(void);
-int dupcheck(char *path, char *work_path);
+int dupcheck(char *path);
 
 #endif

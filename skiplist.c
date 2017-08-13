@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "skiplist.h"
+#include "cmpfile.h"
  
 
 /* codes refer to Redis */
@@ -61,7 +62,8 @@ void zslFree(zskiplist *zsl) {
  * levels are less likely to be returned. */
 int zslRandomLevel(void) {
     int level = 1;
-    while ((random()&0xFFFF) < (ZSKIPLIST_P * 0xFFFF))
+    //while ((random()&0xFFFF) < (ZSKIPLIST_P * 0xFFFF))
+    while ((rand()&0xFFF) < (ZSKIPLIST_P * 0xFFF))
         level += 1;
     return (level<ZSKIPLIST_MAXLEVEL) ? level : ZSKIPLIST_MAXLEVEL;
 }
@@ -75,6 +77,10 @@ zskiplistNode *zslInsert(zskiplist *zsl, int64_t score, sds ele) {
     int i, level;
 	int cmpres = 1;
 
+    #if DEBUG
+    if(zsl)
+    _dbg("zsl is not null")
+    #endif
     //serverAssert(!isnan(score));
     x = zsl->header;
     for (i = zsl->level-1; i >= 0; i--) {
@@ -83,8 +89,11 @@ zskiplistNode *zslInsert(zskiplist *zsl, int64_t score, sds ele) {
         while (x->level[i].forward &&
                 (x->level[i].forward->score < score ||
                     (x->level[i].forward->score == score &&
-                    cmpres = sdscmp(x->level[i].forward->ele,ele) <= 0)))
+                    (cmpres = sdscmp(x->level[i].forward->ele,ele,score)) <= 0)))
         {
+            #if DEBUG
+             _dbg("in the while")
+            #endif
             rank[i] += x->level[i].span;
             x = x->level[i].forward;
 			/* duplicate elements are not allow */
@@ -96,6 +105,9 @@ zskiplistNode *zslInsert(zskiplist *zsl, int64_t score, sds ele) {
         }
         update[i] = x;
     }
+    #if DEBUG
+    _dbg("preinsert")
+    #endif
     /* we assume the element is not already inside, since we allow duplicated
      * scores, reinserting the same element should never happen since the
      * caller of zslInsert() should test in the hash table if the element is
@@ -131,6 +143,9 @@ zskiplistNode *zslInsert(zskiplist *zsl, int64_t score, sds ele) {
         zsl->tail = x;
     zsl->length++;
     //return x;
+    #if DEBUG
+    fprintf(stderr, "%s\n", x->ele);
+    #endif
 	return NULL;
 }
 
@@ -172,7 +187,7 @@ int zslDelete(zskiplist *zsl, int64_t score, sds ele, zskiplistNode **node) {
         while (x->level[i].forward &&
                 (x->level[i].forward->score < score ||
                     (x->level[i].forward->score == score &&
-                     sdscmp(x->level[i].forward->ele,ele) < 0)))
+                     sdscmp(x->level[i].forward->ele,ele,score) < 0)))
         {
             x = x->level[i].forward;
         }
@@ -181,7 +196,7 @@ int zslDelete(zskiplist *zsl, int64_t score, sds ele, zskiplistNode **node) {
     /* We may have multiple elements with the same score, what we need
      * is to find the element with both the right score and object. */
     x = x->level[0].forward;
-    if (x && score == x->score && sdscmp(x->ele,ele) == 0) {
+    if (x && score == x->score && sdscmp(x->ele,ele,score) == 0) {
         zslDeleteNode(zsl, x, update);
         if (!node)
             zslFreeNode(x);
@@ -206,13 +221,13 @@ unsigned long zslGetRank(zskiplist *zsl, int64_t score, sds ele) {
         while (x->level[i].forward &&
             (x->level[i].forward->score < score ||
                 (x->level[i].forward->score == score &&
-                sdscmp(x->level[i].forward->ele,ele) <= 0))) {
+                sdscmp(x->level[i].forward->ele,ele,score) <= 0))) {
             rank += x->level[i].span;
             x = x->level[i].forward;
         }
 
         /* x might be equal to zsl->header, so test if obj is non-NULL */
-        if (x->ele && sdscmp(x->ele,ele) == 0) {
+        if (x->ele && sdscmp(x->ele,ele,x->score) == 0) {
             return rank;
         }
     }

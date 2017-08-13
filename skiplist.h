@@ -10,10 +10,10 @@
 #define zmalloc malloc
 #define zfree free
 #define sdsfree free
-#define sdscmp strcmp
+#define sdscmp cmpfile
 
 typedef struct zskiplistNode {
-    sds *ele;
+    sds ele;
     int64_t score;
     struct zskiplistNode *backward;
     struct zskiplistLevel {
