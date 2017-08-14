@@ -34,3 +34,6 @@
 # Vim file
 *.swp
 *.swo
+
+# Other
+*.stackdump

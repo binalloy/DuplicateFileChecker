@@ -5,8 +5,9 @@
 #include <string.h>
 #include "tdir.h"
  int main(int argc,char *argv[])  
- {      clock_t start,finish;
- 	    start=clock();    
+ {      //clock_t start;
+ 	    clock_t finish;
+ 	    //start=clock();    
  	    double comparetime;
  	    char *tmp;
  	    
@@ -25,7 +26,7 @@
         listDir(argv[1]); //第一个参数为 想要遍历的 linux 目录 例如，当前目录为 ./ ,上一层目录为../  
 
          finish=clock();
-         comparetime=(double)(finish-start)/CLOCKS_PER_SEC;
+         comparetime=(double)(finish)/CLOCKS_PER_SEC;
          fprintf(stderr,"%f seconds\n",comparetime);
          return 0;
  }

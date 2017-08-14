@@ -14,15 +14,15 @@ void listDir(char *path)  //main函数的argv[1] char * 作为 所需要遍历�
          //int               i=0  ;  
          char              childpath[PATH_MAX_LEN];  //定义一个字符数组，用来存放读取的路径
          char              filepath[PATH_MAX_LEN];
-         fprintf(stderr,"listDir, the input path : %s\n", path);;
+         fprintf(stderr,"Scaning files, the current path : %s\n", path);;
          pDir=opendir(path); //  opendir方法打开path目录，并将地址付给pDir指针
          memset(childpath,0,sizeof(childpath)); //将字符数组childpath的数组元素全部置零 
 
          if(NULL==pDir)
          {  
-            #if DEBUG
-            printf("PATH : \"%s\" not exist,exit this function\n", path);
-            #endif
+            //#if DEBUG
+            fprintf(stderr,"Sorry!unknow error occurs: PATH : \"%s\" cannot be opened by \"opendir function\" or does not exist. \n", path);
+            //#endif
 
          	return; 
          	}   
@@ -36,7 +36,7 @@ void listDir(char *path)  //main函数的argv[1] char * 作为 所需要遍历�
                                  continue;  
    
                          sprintf(childpath,"%s/%s",path,ent->d_name);  //如果非. ..则将 路径 和 文件名d_name 付给childpath, 并在下一行prinf输出
-                         fprintf(stderr,"path:%s\n",childpath);  
+                         //fprintf(stderr,"path:%s\n",childpath);  
    
                          listDir(childpath);  //递归读取下层的字目录内容， 因为是递归，所以从外往里逐次输出所有目录（路径+目录名），
                                             //然后才在else中由内往外逐次输出所有文件名
@@ -44,7 +44,7 @@ void listDir(char *path)  //main函数的argv[1] char * 作为 所需要遍历�
                  }  
                else  //如果读取的d_type类型不是 DT_DIR, 即读取的不是目录，而是文件，则直接输出 d_name, 即输出文件名
                {
-                   fprintf(stderr,"File: %s/%s\n", childpath,ent->d_name);  //输出文件名 带上了目录
+                   //fprintf(stderr,"File: %s/%s\n", childpath,ent->d_name);  //输出文件名 带上了目录
                     sprintf(filepath,"%s/%s",path,ent->d_name);
                     #if DEBUG
                     _dbg(filepath)

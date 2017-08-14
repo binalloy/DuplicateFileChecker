@@ -5,7 +5,7 @@
 
 #define PATH_MAX_LEN 512
 
-#define DEBUG 1
+#define DEBUG 0
 #define _dbg(msg) do{dbgmsg(__FILE__,__LINE__, msg);}while(0);
 
 char WORK_PATH[PATH_MAX_LEN];
