@@ -4,7 +4,10 @@
 #include <stdio.h>
 #include <string.h>
 #include "tdir.h"
- int main(int argc,char *argv[])  
+
+char WORK_PATH[PATH_MAX_LEN];
+
+int main(int argc,char *argv[])  
  {      //clock_t start;
  	    clock_t finish;
  	    //start=clock();    
