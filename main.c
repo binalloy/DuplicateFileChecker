@@ -1,22 +1,36 @@
+//group member:11510257 彭福，11510746张晓文，11611601何海彬
 #include "main.h"
 #include "dupcheck.h"
 #include <time.h>
 #include <stdio.h>
 #include <string.h>
 #include "tdir.h"
+ #include <dirent.h> 
  int main(int argc,char *argv[])  
  {      //clock_t start;
  	    clock_t finish;
  	    //start=clock();    
  	    double comparetime;
  	    char *tmp;
+ 	    DIR  *pDir ;  
  	    
  		if(argc!=2)
  		{
- 			fprintf(stderr,"the argument cout is not 2,return 1\n");
+ 			fprintf(stderr,"Sorry!Parameter error: the argument count is not 2!\nPlease enter the programe name and a file path.\nExit the program.\n");
  			return 1;
  		}	
+        pDir=opendir(argv[1]);
 
+        if(NULL==pDir)
+         {  
+           
+            fprintf(stderr,"Sorry! Dirent error:\n\
+PATH : \"%s\" cannot be opened by \"opendir function\" or does not exist.\nPlease reboot this programe and enter a correct file path.\n\
+Exit the program.\n", argv[1]);
+          
+
+         	return 1; 
+         	}   
 
  		strcpy(WORK_PATH,argv[1]);
  		tmp = WORK_PATH;
@@ -27,7 +41,7 @@
 
          finish=clock();
          comparetime=(double)(finish)/CLOCKS_PER_SEC;
-         fprintf(stderr,"%f seconds\n",comparetime);
+         fprintf(stderr,"scaning finished!it has token %f seconds CPU time.\n",comparetime);
          return 0;
  }
 
