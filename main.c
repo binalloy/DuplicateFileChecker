@@ -5,9 +5,11 @@
 #include <stdio.h>
 #include <string.h>
 #include "tdir.h"
- #include <dirent.h> 
- int main(int argc,char *argv[])  
- {      //clock_t start;
+#include <dirent.h> 
+
+char WORK_PATH[PATH_MAX_LEN];
+
+int main(int argc,char *argv[])  {      //clock_t start;
  	    clock_t finish;
  	    //start=clock();    
  	    double comparetime;

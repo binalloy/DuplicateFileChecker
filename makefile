@@ -1,25 +1,29 @@
-OBJECTS = cmpfile.o dupcheck.o skiplist.o tdir.o main.o
-HEAD_FILE = cmpfile.h dupcheck.h skiplist.h tdir.h main.h
+#OBJECTS = cmpfile.o dupcheck.o skiplist.o tdir.o main.o
+#HEAD_FILE = cmpfile.h dupcheck.h skiplist.h tdir.h main.h
+CC = gcc
+SRC = $(wildcard *.c)
+OBJ = $(SRC:.c=.o)
+CFLAGS = -Wall
+TARGET = DupfilesChecker
 
-lab3 : $(OBJECTS)  $(HEAD_FILE)
-	gcc -o lab3 $(OBJECTS) 
+.PHONY : rebuild clean
+all : $(TARGET)
 
-cmpfile.o : cmpfile.c
-	gcc -c -Wall cmpfile.c
-dupcheck.o : dupcheck.c
-	gcc -c -Wall dupcheck.c
-skiplist.o : skiplist.c
-	gcc -c -Wall skiplist.c
-tdir.o: tdir.c
-	gcc -c -Wall tdir.c
-main.o: main.c
-	gcc -c -Wall main.c
+DupfilesChecker : $(OBJ) 
+	$(CC) -o $@ $(CFLAGS) $^ 
 
-.PHONY : clean
+%.d: %.c
+	@set -e; rm -f $@; \
+	$(CC) -MM $(CPPFLAGS) $< > $@.$$$$; \
+	sed 's,\($*\)\.o[ :]*,\1.o $@ : ,g' < $@.$$$$ > $@; \
+	rm -f $@.$$$$
+
+-include $(SRC:.c=.d)
+
+rebuild : clean all
+
 clean : 
 	find . -name "*.o"  | xargs rm -f
 	find . -name "*.exe" | xargs rm -f
-
-rebuild :
-	make clean
-	make
+	find . -name "*.d"  | xargs rm -f
+	rm -f $(TARGET)
