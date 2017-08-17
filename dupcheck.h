@@ -3,5 +3,6 @@
 
 int dupcheck_init(void);
 int dupcheck(char *path);
+void print_list(FILE *steam);
 
 #endif

@@ -8,7 +8,8 @@
 #define DEBUG 0
 #define _dbg(msg) do{dbgmsg(__FILE__,__LINE__, msg);}while(0);
 
-extern char WORK_PATH[PATH_MAX_LEN];
+char *get_WORKPATH();
+FILE *get_logfp();
 
 void dbgmsg(char *fname, int line, char *txt);
 

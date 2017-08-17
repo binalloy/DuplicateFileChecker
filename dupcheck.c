@@ -8,6 +8,18 @@
 
 static zskiplist *skiplist;
 
+void print_list(FILE *steam) {
+	zskiplistNode *x;
+	
+	if(skiplist && steam) {
+		x = skiplist->header;
+		while(x) {
+			fprintf(steam, "%lld\t\t%s\n", x->score, x->ele);
+			x = x->level[0].forward;
+		}
+	}
+}
+
 int dup_handle(char *ele1, char *ele2) {
 	fprintf(stdout, "%s\t%s\n", ele1, ele2);
 	return 0;
@@ -27,6 +39,7 @@ int dupcheck(char *path) {
 	struct stat statbuf;
 	zskiplistNode *slnode;
 	char *rel_path;
+	FILE *log_fp;
 	
 	/* get file size */
     stat(path,&statbuf);
@@ -35,11 +48,12 @@ int dupcheck(char *path) {
 	/* check duplicate file, if no, save it in the list */
 	//rel_path = malloc((strlen(path)-strlen(WORK_PATH)) * sizeof(char));
 	//stpcpy(rel_path, path+strlen(WORK_PATH)+1);
-	rel_path = strdup(path+strlen(WORK_PATH)+1);
+	rel_path = strdup(path+strlen(get_WORKPATH()));
 	#if DEBUG
 	_dbg(path)
 	_dbg(rel_path)
 	#endif
+	if((log_fp = get_logfp())) fprintf(log_fp,"\tChecking: %s\n", rel_path);
 	slnode = zslInsert(skiplist, size, rel_path); //return the duplicate one
 	#if DEBUG
 	_dbg("bbb")
